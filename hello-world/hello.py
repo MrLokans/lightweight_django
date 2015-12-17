@@ -27,9 +27,11 @@ settings.configure(
 from io import BytesIO
 
 from django import forms
+from django.core.cache import cache
 from django.conf.urls import url
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.wsgi import get_wsgi_application
+
 
 from PIL import Image, ImageDraw
 
@@ -56,19 +58,25 @@ def placeholder(request, width, height):
 
 
 def create_image(width, height, img_format='PNG', text_color=(255, 255, 255)):
-    image = Image.new('RGB', (width, height))
-    draw_area = ImageDraw.Draw(image)
-    # we create file-like object to store image data
-    image_text = '{} x {}'.format(width, height)
+    key = "{}_{}_{}".format(width, height, img_format)
+    content = cache.get(key, None)
 
-    text_w, text_h = draw_area.textsize(image_text)
-    if text_w < width and text_h < height:
-        text_top = (height - text_h) // 2
-        text_left = (width - text_w) // 2
-        draw_area.text((text_left, text_top), image_text, fill=text_color)
-    content = BytesIO()
-    image.save(content, img_format)
-    content.seek(0)
+    if content is None:
+        image = Image.new('RGB', (width, height))
+        draw_area = ImageDraw.Draw(image)
+        # we create file-like object to store image data
+        image_text = '{} x {}'.format(width, height)
+
+        text_w, text_h = draw_area.textsize(image_text)
+        if text_w < width and text_h < height:
+            text_top = (height - text_h) // 2
+            text_left = (width - text_w) // 2
+            draw_area.text((text_left, text_top), image_text, fill=text_color)
+        content = BytesIO()
+        image.save(content, img_format)
+        content.seek(0)
+        # here we put our newly generated image to django's cache
+        cache.set(key, content, 60 * 60)
     return content
 
 urlpatterns = (
