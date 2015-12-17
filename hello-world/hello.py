@@ -1,5 +1,7 @@
 import os
 import sys
+import hashlib
+
 from django.conf import settings
 
 # Settings have to be specified first,
@@ -30,6 +32,7 @@ from django import forms
 from django.core.cache import cache
 from django.conf.urls import url
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.views.decorators.http import etag
 from django.core.wsgi import get_wsgi_application
 
 
@@ -46,6 +49,15 @@ def index(request):
     return HttpResponse('Hello World')
 
 
+def generate_image_etag(request, width, height):
+    content = 'Placeholder image: {} x {}'.format(width, height)
+    return hashlib.sha1(content.encode('utf-8')).hexdigest()
+
+
+# this is used to enable client-side etag cache validation
+# if client requests already downloaded file it will be retreived from
+# browser's local cache
+@etag(generate_image_etag)
 def placeholder(request, width, height):
     form = ImageForm({'height': height, 'width': width})
     if form.is_valid():
