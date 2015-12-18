@@ -7,6 +7,8 @@ from django.conf import settings
 # Settings have to be specified first,
 # as some modules rely on them
 
+BASE_DIR = os.path.dirname(__file__)
+
 DEBUG = os.environ.get('DEBUG', 'on') == 'on'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', os.urandom(32))
@@ -24,6 +26,16 @@ settings.configure(
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     ),
+    INSTALLED_APPS=(
+        'django.contrib.staticfiles'
+    ),
+    TEMPLATE_DIRS=(
+        os.path.join(BASE_DIR, 'templates'),
+    ),
+    STATICFIES_DIRS=(
+        os.path.join(BASE_DIR, 'static'),
+    ),
+    STATIC_URL='/static/',
 )
 
 from io import BytesIO
