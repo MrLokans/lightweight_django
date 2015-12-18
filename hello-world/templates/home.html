@@ -1,0 +1,20 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Placeholder images generator.</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
+</head>
+<body>
+    <h1>Placeholder Generator</h1>
+    <p>In order to get a link to an image of the given height and width point img 'src' attribute to <strong>/placeholder/&lt;width&gt;x&lt;width&lt;height&gt;</strong>. See examples below:</p>
+    <p>
+        <ul>
+            <li><img src="{% url 'placeholder' width=50 height=50" alt="placeholder 50x50"></li>
+            <li><img src="{% url 'placeholder' width=100 height=50" alt="placeholder 100x50"></li>
+            <li><img src="{% url 'placeholder' width=50 height=100" alt="placeholder 50x100"></li>
+        </ul>
+    </p>
+</body>
+</html>
