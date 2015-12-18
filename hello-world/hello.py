@@ -27,7 +27,7 @@ settings.configure(
 
     ),
     INSTALLED_APPS=(
-        'django.contrib.staticfiles'
+        'django.contrib.staticfiles',
     ),
     TEMPLATE_DIRS=(
         os.path.join(BASE_DIR, 'templates'),
@@ -42,7 +42,9 @@ from io import BytesIO
 
 from django import forms
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.conf.urls import url
+from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import etag
 from django.core.wsgi import get_wsgi_application
@@ -58,7 +60,13 @@ class ImageForm(forms.Form):
 
 
 def index(request):
-    return HttpResponse('Hello World')
+    # example = reverse('placeholder', kwargs={'width': 50, 'height': 50})
+    # wi build url for our example request
+    # context = {
+        # 'example': request.build_absolute_uri(example)
+    # }
+    # print(request.build_absolute_uri(example))
+    return render(request, 'home.html')
 
 
 def generate_image_etag(request, width, height):
@@ -104,7 +112,7 @@ def create_image(width, height, img_format='PNG', text_color=(255, 255, 255)):
     return content
 
 urlpatterns = (
-    url(r'^image/(?P<width>[0-9]+)x(?P<height>[0-9]+)/$', placeholder, name='placeholder'),
+    url(r'^image/(?P<width>[0-9]+)x(?P<height>[0-9]+)$', placeholder, name='placeholder'),
     url(r'^$', index, name='homepage'),
 )
 
