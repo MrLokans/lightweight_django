@@ -1,1 +1,29 @@
-<h2>Welcome to static page generator.</h2>
+{% load webdesign %}
+<div class="jumbotron">
+    <div class="container">
+        <h2>Welcome to static page generator.</h2>        
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>About</h2>
+            <p>{% lorem %}</p>
+        </div>
+        <div class="col-md-6">
+            <h2>Contacts</h2>
+            <p>{% lorem %}</p>
+            <p>
+                <a href="{% url 'page' 'contact' %}" class="btn btn-defaut" role="button">Contact us >></a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<hr>
+<footer>
+    <div class="container">
+        <p>&copy; Anders and Co {% now 'Y' %}</p>
+    </div>
+</footer>
