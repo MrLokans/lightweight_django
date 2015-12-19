@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ block.super }} - {{ page_name|capfirst }}
+{% endblock %}
+
+{% block content %}
+    {% include page %}
+{% endblock %}
