@@ -23,7 +23,9 @@ def get_page_or_404(name):
 
 
 def render_page(request, page_name='index'):
+    print("page_name: {}".format(page_name))
     file_name = "{}.html".format(page_name)
+    print("filename: {}".format(file_name))
     page = get_page_or_404(file_name)
     context = {
         'page_name': page_name,

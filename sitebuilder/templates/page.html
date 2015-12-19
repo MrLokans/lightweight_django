@@ -4,6 +4,12 @@
     {{ block.super }} - {{ page_name|capfirst }}
 {% endblock %}
 
+{% block body-id %}
+    {# lowercase and '-' instead of spaces #}
+    {{ page_name|slugify }}
+{% endblock %}
+
+
 {% block content %}
     {% include page %}
 {% endblock %}
