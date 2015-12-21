@@ -3,7 +3,36 @@
 {% block context %}
 {
     "description": "product prices",
-    "keywords": "prices,products,purchase,tarifs"
+    "keywords": "prices,products,purchase,tarifs",
+    "plans": [
+        {
+            "name": "Starter Kit",
+            "price": "Free",
+            "class": "success",
+            "features": [1]
+        },
+
+        {
+            "name": "Basic Kit",
+            "price": "100$/month",
+            "class": "danger",
+            "features": [1, 2]
+        },
+
+        {
+            "name": "Advanced Kit",
+            "price": "200$ / month",
+            "class": "info",
+            "features": [1, 2, 3, 4]
+
+        }
+    ],
+    "features": [
+        "Feature 1",
+        "Feature 2",
+        "Feature 3",
+        "Feature 4"
+    ]
 }
 {% endblock %}
 <div class="container">
@@ -14,50 +43,27 @@
     </div>
 
     <div class="row">
-        <div class="col-md-4">
-            <div class="panel panel-success">
+        {% for plan in plans %}
+
+         <div class="col-md-4">
+            <div class="panel panel-{{ plan.class }}">
                 <div class="panel-heading">
-                    <h4 class="text-center">Starter Kit - For Free!</h4>
+                    <h4 class="text-center">{{ plan.name }} - {{ plan.price }}</h4>
                 </div>
                 <ul class="list-group list-group-flush text-center">
-                    <li class="list-group-item">Feature 1
+                    {% for feature in features %}
+                    <li class="list-group-item
+                    {% if forloop.counter not in plan.features %}disabled{% endif %}
+                    ">
+                    {{ feature }}
                     </li>
-                    <li class="list-group-item disabled">Feature 2</li>
-                    <li class="list-group-item disabled">Feature 3</li>
+                    {% endfor %}
                 </ul>
                 <div class="panel-footer"><a href="#" class="btn btn-lg btn-block btn-success">Buy now</a></div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="panel panel-danger">
-                <div class="panel-heading">
-                    <h4 class="text-center">Basic  Kit - 100$/year!</h4>
-                </div>
-                <ul class="list-group list-group-flush text-center">
-                    <li class="list-group-item">Feature 1
-                    </li>
-                    <li class="list-group-item disabled">Feature 2</li>
-                    <li class="list-group-item">Feature 3</li>
-                </ul>
-                <div class="panel-footer"><a href="#" class="btn btn-lg btn-block btn-danger">Buy now</a></div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h4 class="text-center">Advanced  Kit - 200$/year!</h4>
-                </div>
-                <ul class="list-group list-group-flush text-center">
-                    <li class="list-group-item">Feature 1
-                    </li>
-                    <li class="list-group-item">Feature 2</li>
-                    <li class="list-group-item">Feature 3</li>
-                </ul>
-                <div class="panel-footer"><a href="#" class="btn btn-lg btn-block btn-info">Buy now</a></div>
-            </div>
-        </div>
+        </div>       
+    
+        {% endfor %}
 
     </div>
 
