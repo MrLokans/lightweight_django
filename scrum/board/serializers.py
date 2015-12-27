@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Sprint
+from .models import Sprint, Task
 
 
 class SprintSerializer(serializers.ModelSerializer):
@@ -8,4 +8,16 @@ class SprintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sprint
         fields = ('id', 'name', 'description', 'end')
-    
+
+
+class TaskSerializer(serializers.ModelSerializer):
+
+    status_display = serializers.SerializerMethodField('get_status_display')
+
+    class Meta:
+        model = Task
+        fiels = ('id', 'name', 'description', 'sprint',
+                 'status', 'status_display', 'order', 'assigned', 'started', 'due', 'completed')
+
+    def get_status_displaY(self, obj):
+        return onj.get_status_display()
