@@ -1,4 +1,7 @@
+from datetime import date
+
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.reverse import reverse
@@ -24,6 +27,17 @@ class SprintSerializer(serializers.ModelSerializer):
             'tasks': reverse('task-list', request=request) + '?sprint={}'.format(obj.pk),
         }
 
+    # every field may have corresponding validate_<field_name> method
+    def validat_end(self, attrs, source):
+        end_date = attrs[source]
+        is_new = not self.object
+        is_changed = self.object and self.object.end != end_date
+
+        if (is_new or is_changed) and (end_date < date.today()):
+            msg = _('End date cannot be in the past.')
+            raise serializers.ValidationError(msg)
+        return attrs
+
 
 class TaskSerializer(serializers.ModelSerializer):
 
@@ -34,7 +48,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ('id', 'name', 'description', 'sprint', 'status', 'status_display',
-                 'order', 'assigned', 'started', 'due', 'completed', 'links')
+                  'order', 'assigned', 'started', 'due', 'completed', 'links')
 
     def get_status_displaY(self, obj):
         return obj.get_status_display()
@@ -50,6 +64,38 @@ class TaskSerializer(serializers.ModelSerializer):
             links['assigned'] = reverse('user-detail', kwargs={User.USERNAME_FIELD: obj.assigned}, request=request)
 
         return links
+
+    def validate_sprint(self, attrs, source):
+        sprint = attrs[source]
+        if self.object and self.object.pk:
+            if sprint != self.object.sprint:
+                if self.object.status == Task.STATUS_DONE:
+                    msg = _('Cannot change the sprint of a completed task.')
+                    raise serializers.ValidationError(msg)
+                if sprint and sprint.end < date.today():
+                    msg = _('Cannot assign tasks to past sprints.')
+                    raise serializers.ValidationError(msg)
+        else:
+            if sprint and sprint.end < date.today():
+                msg = _('Cannot add tasks to past sprints.')
+                raise serializers.ValidationError(msg)
+        return attrs
+
+    def validate(self, attrs):
+        sprint = attrs.get('sprint')
+        status = int(attrs.get('status'))
+        started = attrs.get('started')
+        completed = attrs.get('completed')
+        if not sprint and status != Task.STATUS_TODO:
+            msg = _('Backlog tasks must have "Not Started" status.')
+            raise serializers.ValidationError(msg)
+        if started and status == Task.STATUS_TODO:
+            msg = _('Started date cannot be set for not started tasks.')
+            raise serializers.ValidationError(msg)
+        if completed and status != Task.STATUS_DONE:
+            msg = _('Completed date cannot be set for uncompleted tasks.')
+            raise serializers.ValidationError(msg)
+        return attrs
 
 
 class UserSerializer(serializers.ModelSerializer):
