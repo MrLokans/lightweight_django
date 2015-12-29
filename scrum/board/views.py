@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import authentication, permissions, viewsets, filters
 
-from .forms import TaskFilter
+from .forms import TaskFilter, SprintFilter
 from .models import Sprint, Task
 from .serializers import SprintSerializer, TaskSerializer, UserSerializer
 
@@ -37,6 +37,7 @@ class SprintViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """ API endpoint to list and alter sprints """
     queryset = Sprint.objects.order_by('end')
     serializer_class = SprintSerializer
+    filter_class = SprintFilter
     # /api/sprints/?search=<name>
     search_fields = ('name', )
     ordering_fields = ('end', 'name', )
@@ -47,6 +48,8 @@ class TaskViewSet(DefaultsMixin, viewsets.ModelViewSet):
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    # /api/sprints/?end_min=<date>
+    # /api/sprints/?end_max=<date>
     filter_class = TaskFilter
     search_fields = ('name', 'description', )
     ordering_fields = ('name', 'order', 'started', 'due', 'completed', )
