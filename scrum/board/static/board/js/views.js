@@ -23,6 +23,34 @@
     var LoginView = TemplateView.extend({
         id: 'login',
         templateName: '#login-template',
+        // listen to all submit events
+        events: {
+            'submit form': 'submit'
+        },
+        submit: function(event){
+            var data = {};
+            event.preventDefault();
+            this.form = $(event.currentTarget);
+            data = {
+                username: $(':input[name="username"]', this.form).val(),
+                password: $(':input[name="password"]', this.form).val()
+            };
+            $.post(app.apiLogin, data)
+                .success($.proxy(this.logiSuccess, this))
+                .fail($.proxy(this.loginFailure, this));
+
+        },
+        loginSuccess: function(data){
+            app.session.save(data.token);
+            this.trigger('login', data.token);
+        },
+        loginFailure: function(xhr, status, error){
+            var errors = xhr.responseJSON;
+            this.showErrors(errors);
+        },
+        showErrors: function(errors){
+            // Display errors
+        }
     });
 
     var HomepageView = TemplateView.extend({
