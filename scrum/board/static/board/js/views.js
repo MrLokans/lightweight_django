@@ -77,7 +77,7 @@
 
         submit: function(event){
             var data = {};
-            FormView.prototype.subit.apply(this, arguments);
+            FormView.prototype.submit.apply(this, arguments);
             data = this.serializeForm(this.form);
             $.post(app.apiLogin, data)
                 .success($.proxy(this.logiSuccess, this))
