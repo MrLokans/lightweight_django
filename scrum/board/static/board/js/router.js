@@ -20,7 +20,7 @@
             var login;
             callback = callback || this[name];
             callback = _.wrap(callback, function(original){
-                var ags = _.without(arguments, original);
+                var args = _.without(arguments, original);
                 if (app.session.authenticated()){
                     original.apply(this, args);
                 } else {
