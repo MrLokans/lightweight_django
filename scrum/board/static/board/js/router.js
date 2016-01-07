@@ -15,6 +15,27 @@
             this.render(view);
         },
 
+        route: function(route, name, callback){
+            // login on every page
+            var login;
+            callback = callback || this[name];
+            callback = _.wrap(callback, function(original){
+                var ags = _.without(arguments, original);
+                if (app.session.authenticated()){
+                    original.apply(this, args);
+                } else {
+                    $(this.contentElement).hide();
+                    login = new app.views.LoginView();
+                    $(this.contentElement).after(login.el);
+                    login.on('done', function(){
+                        $(this.contentElement).show();
+                        original.apply(this, args);
+                    }, this);
+                    login.render();
+                }
+            });
+            return Backbone.Router.prototype.route.apply(this, [route, name, callback]);
+        },
         render: function(view){
             if(this.current){
                 this.current.$el = $();
