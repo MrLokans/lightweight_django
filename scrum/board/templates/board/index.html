@@ -6,6 +6,9 @@
     <meta htt-equiv="X-UA-Compatible" content="IE=edge">
     <title>Scrum Board</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'board/vendor/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'board/css/board.css' %}">
+
     <script type="text/html" id="home-template">
         <h2>Backbone template example</h2>    
     </script>
@@ -15,7 +18,7 @@
         <label for="id_username">Username</label>
         <input type="text" name="username" maxlength="30" required id="id_username" />
 
-        <label for="id_password">Username</label>
+        <label for="id_password">Password</label>
         <input type="text" name="password" maxlength="30" required id="id_password" />
 
         <button type="submit">Login</button>
@@ -48,7 +51,7 @@
         "views": {},
         "router": null,
         "apiRoot": "{% url 'api-root' %}",
-        "apiLogin": "{% irl 'api-token' %}"
+        "apiLogin": "{% url 'api-token' %}"
     }
     </script>
     <script src="{% static 'board/js/app.js' %}"></script>
