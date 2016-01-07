@@ -19,37 +19,17 @@
         }
     });
 
-
-    var LoginView = TemplateView.extend({
-        id: 'login',
-        templateName: '#login-template',
-        errorTemplate: _.template('<span class="error"><%- msg %></span>'),        
+    var FormView = TemplateView.extend({
+        errorTemplate: _.template('<span class="error"><%- msg -></span>'),        
         // listen to all submit events
         events: {
             'submit form': 'submit'
         },
-        submit: function(event){
-            var data = {};
-            event.preventDefault();
-            this.form = $(event.currentTarget);
-            this.clearErrors();
-            data = {
-                username: $(':input[name="username"]', this.form).val(),
-                password: $(':input[name="password"]', this.form).val()
-            };
-            $.post(app.apiLogin, data)
-                .success($.proxy(this.logiSuccess, this))
-                .fail($.proxy(this.loginFailure, this));
 
+        clearErrors: function(){
+            $('.error', this.form).remove();
         },
-        loginSuccess: function(data){
-            app.session.save(data.token);
-            this.trigger('login', data.token);
-        },
-        loginFailure: function(xhr, status, error){
-            var errors = xhr.responseJSON;
-            this.showErrors(errors);
-        },
+
         showErrors: function(errors){
             _.map(errors, function(fieldErrors, name){
                 var field = $(':input[name=' + name + ']', this.form);
@@ -67,9 +47,47 @@
             }, this);
         },
 
-        clearErrors: function(){
-            $('.error', this.form).remove();
+        serializeForm: function(form){
+            return _.object(_.map(form.serializeArray(), function(item){
+                return [item.name, item.value];
+            }));
+        },
+        submit: function(event){
+            event.preventDefault();
+            this.form = $(event.currentTarget);
+            this.clearErrors();
+        },
+        failure: function(xhr, status, error){
+            var errors = xhr.responseJSON;
+            this.showErrors(errors);
+        },
+        done: function(event){
+            if (event){
+                event.preventDefault();
+            }
+            this.trigger('done');
+            this.remove();
         }
+    });
+
+    var LoginView = FormView.extend({
+        id: 'login',
+        templateName: '#login-template',
+        errorTemplate: _.template('<span class="error"><%- msg -></span>'),        
+
+        submit: function(event){
+            var data = {};
+            FormView.prototype.subit.apply(this, arguments);
+            data = this.serializeForm(this.form);
+            $.post(app.apiLogin, data)
+                .success($.proxy(this.logiSuccess, this))
+                .fail($.proxy(this.loginFailure, this));
+
+        },
+        loginSuccess: function(data){
+            app.session.save(data.token);
+            this.trigger('login', data.token);
+        },
     });
 
     var HomepageView = TemplateView.extend({
