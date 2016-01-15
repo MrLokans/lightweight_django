@@ -95,6 +95,10 @@
     });
 
     var HomepageView = TemplateView.extend({
+        templateName: '#home-template',
+        events: {
+            'click button.add': 'renderAddForm'
+        },
         initialize: function(options){
             var self = this;
             TemplateView.prototype.initialize.apply(this, arguments);
@@ -110,6 +114,17 @@
         },
         getContext: function(){
             return {sprints: app.sprints || null};
+        },
+        renderAddForm: function(event){
+            var view = new NewSprintView();
+            var link = $(event.currentTarget);
+            event.preventDefault();
+            link.before(view.el);
+            link.hide();
+            view.render();
+            view.on('done', function(){
+                link.show();
+            });
         }
     });
 
