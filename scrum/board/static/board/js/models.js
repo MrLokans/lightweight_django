@@ -82,6 +82,19 @@
     });
 
     app.session = new Session();
+
+    var baseModel = Backbone.Model.extend({
+        url: function(){
+            var links = this.get('links');
+            var url = links && links.self;
+
+            if(!url){
+                url = Backbone.Model.prototype.url.call(this);
+            }
+            return url;
+        }
+    });
+
     app.models.Sprint = Backbone.Model.extend({});
     app.models.Task = Backbone.Model.extend({});
     app.models.User = Backbone.Model.extend({});
