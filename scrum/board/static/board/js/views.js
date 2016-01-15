@@ -67,6 +67,10 @@
             }
             this.trigger('done');
             this.remove();
+        },
+        modelFailure: function(model, xhr, options){
+            var errors=xhr.responseJSON;
+            this.showErrors(errors);
         }
     });
 
