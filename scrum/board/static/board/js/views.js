@@ -129,6 +129,33 @@
         }
     });
 
+    var NewSprintView = FormView.extend({
+        templateName: '#new-sprint-template',
+        className: 'new-sprint',
+        // extend FormView events with out button click
+        events: _.extend({
+            'click button.cancel': 'done',
+        }, FormView.prototype.events),
+        submit: function(event){
+            var self = this;
+            var attributes = {};
+            // call Form View's prototype submit method
+            FormView.prototype.submit.apply(this, arguments);
+            attributes = this.serializeForm(this.form);
+            app.collections.ready.done(function(){
+                app.sprints.create(attributes, {
+                    wait: true,
+                    success: $.proxy(self.success, self),
+                    error: $.proxy(self.modelFailure, self)
+                });
+            });
+        },
+        success: function(model){
+            this.done();
+            window.location.hash = '#sprint/' + model.get('id');
+        }
+    });
+
     app.views.HomepageView = HomepageView;
     app.views.LoginView = LoginView;
     app.views.HeaderView = HeaderView;
